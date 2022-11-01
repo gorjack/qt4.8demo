@@ -100,6 +100,10 @@ bool Spreadsheet::writeFile(const QString &fileName)
         return false;
     }
 
+    QProgressDialog progress(this);
+    progress.setRange(0, RowCount);
+    progress.setModal(true);
+
     QDataStream out(&file);
     out.setVersion(QDataStream::Qt_4_3);
 
@@ -107,6 +111,8 @@ bool Spreadsheet::writeFile(const QString &fileName)
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     for (int row = 0; row < RowCount; ++row) {
+        progress.setValue(row);
+        qApp->processEvents();
         for (int column = 0; column < ColumnCount; ++column) {
             QString str = formula(row, column);
             if (!str.isEmpty())
